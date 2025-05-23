@@ -55,18 +55,20 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
           sh '''
-            git config user.email "sahiltk07@gmail.com"
-            git config user.name "sahil-007"
-            BUILD_NUMBER=${BUILD_NUMBER}
-            sed -i "s|image: sahil369/ultimate-cicd:.*|image: sahil369/ultimate-cicd:${BUILD_NUMBER}|g" java-app/spring-boot-app-manifests/deployment.yml
-            git add java-app/spring-boot-app-manifests/deployment.yml
-            if ! git diff --cached --quiet; then
-              git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-              git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-            else
-              echo "No changes to commit."
-            fi
-          '''
+    cd java-app/spring-boot-app-manifests
+    git config user.email "sahiltk07@gmail.com"
+    git config user.name "sahil-007"
+    BUILD_NUMBER=${BUILD_NUMBER}
+    sed -i "s|image: sahil369/ultimate-cicd:.*|image: sahil369/ultimate-cicd:${BUILD_NUMBER}|g" deployment.yml
+    git add deployment.yml
+    if ! git diff --cached --quiet; then
+      git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+      git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+    else
+      echo "No changes to commit."
+    fi
+'''
+
         }
       }
     }
